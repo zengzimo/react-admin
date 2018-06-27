@@ -27,6 +27,19 @@ const styles = {
     hellip: { padding: '1.2em' },
 };
 
+const sanitizeRestProps = ({
+    currentSort,
+    displayedFilters,
+    filterValues,
+    hideFilter,
+    isLoading,
+    showFilter,
+    selectedIds,
+    setFilters,
+    onUnselectItems,
+    ...rest
+}) => rest;
+
 export class Pagination extends Component {
     range() {
         const input = [];
@@ -148,7 +161,7 @@ export class Pagination extends Component {
                     <Toolbar
                         className={className}
                         classes={{ root: classes.mobileToolbar }}
-                        {...rest}
+                        {...sanitizeRestProps(rest)}
                     >
                         {page > 1 && (
                             <IconButton color="primary" onClick={this.prevPage}>
@@ -178,7 +191,7 @@ export class Pagination extends Component {
                             className,
                             classes.desktopToolbar
                         )}
-                        {...rest}
+                        {...sanitizeRestProps(rest)}
                     >
                         <Typography
                             variant="body1"

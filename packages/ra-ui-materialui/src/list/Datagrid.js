@@ -33,6 +33,19 @@ const styles = {
     },
 };
 
+const sanitizeRestProps = ({
+    currentSort,
+    displayedFilters,
+    filterValues,
+    hideFilter,
+    isLoading,
+    showFilter,
+    selectedIds,
+    setFilters,
+    onUnselectItems,
+    ...rest
+}) => rest;
+
 /**
  * The Datagrid component renders a list of records as a table.
  * It is usually used as a child of the <List> and <ReferenceManyField> components.
@@ -115,7 +128,10 @@ class Datagrid extends Component {
         } = this.props;
 
         return (
-            <Table className={classnames(classes.table, className)} {...rest}>
+            <Table
+                className={classnames(classes.table, className)}
+                {...sanitizeRestProps(rest)}
+            >
                 <TableHead>
                     <TableRow className={classes.row}>
                         {hasBulkActions && (

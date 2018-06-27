@@ -5,22 +5,30 @@ import onlyUpdateForKeys from 'recompose/onlyUpdateForKeys';
 import { CreateButton, RefreshButton } from '../button';
 import CardActions from '../layout/CardActions';
 
+const sanitizeRestProps = ({
+    currentSort,
+    hideFilter,
+    isLoading,
+    setFilters,
+    ...rest
+}) => rest;
+
 const Actions = ({
+    basePath,
     bulkActions,
     className,
-    resource,
-    filters,
     displayedFilters,
+    filters,
     filterValues,
     hasCreate,
-    basePath,
-    selectedIds,
     onUnselectItems,
+    resource,
+    selectedIds,
     showFilter,
     ...rest
 }) => {
     return (
-        <CardActions className={className} {...rest}>
+        <CardActions className={className} {...sanitizeRestProps(rest)}>
             {bulkActions &&
                 cloneElement(bulkActions, {
                     basePath,

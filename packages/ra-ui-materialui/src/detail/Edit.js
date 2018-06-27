@@ -75,7 +75,16 @@ export const EditView = ({
                     resource,
                 }}
             />
-            {record ? (
+            {typeof children === 'function' ? (
+                children({
+                    save,
+                    resource,
+                    basePath,
+                    record,
+                    redirect,
+                    version,
+                })
+            ) : record ? (
                 React.cloneElement(children, {
                     save,
                     resource,

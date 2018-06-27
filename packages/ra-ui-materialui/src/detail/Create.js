@@ -65,16 +65,18 @@ export const CreateView = ({
                     hasList,
                 }}
             />
-            {React.cloneElement(children, {
-                save,
-                resource,
-                basePath,
-                record,
-                redirect:
-                    typeof children.props.redirect === 'undefined'
-                        ? redirect
-                        : children.props.redirect,
-            })}
+            {typeof children === 'function'
+                ? children({ save, resource, basePath, record, redirect })
+                : React.cloneElement(children, {
+                      save,
+                      resource,
+                      basePath,
+                      record,
+                      redirect:
+                          typeof children.props.redirect === 'undefined'
+                              ? redirect
+                              : children.props.redirect,
+                  })}
         </Card>
     </div>
 );

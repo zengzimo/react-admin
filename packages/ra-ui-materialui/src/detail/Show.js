@@ -70,13 +70,20 @@ export const ShowView = ({
                     resource,
                 }}
             />
-            {record &&
-                React.cloneElement(children, {
-                    resource,
-                    basePath,
-                    record,
-                    version,
-                })}
+            {typeof children === 'function'
+                ? children({
+                      resource,
+                      basePath,
+                      record,
+                      version,
+                  })
+                : record &&
+                  React.cloneElement(children, {
+                      resource,
+                      basePath,
+                      record,
+                      version,
+                  })}
         </Card>
     </div>
 );

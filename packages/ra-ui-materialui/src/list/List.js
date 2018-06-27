@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import React from 'react';
+import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -64,128 +64,231 @@ const sanitizeRestProps = ({
     ...rest
 }) => rest;
 
-export const ListView = ({
-    actions = <DefaultActions />,
-    basePath,
-    bulkActions = <DefaultBulkActions />,
-    children,
-    className,
-    classes = {},
-    currentSort,
-    data,
-    defaultTitle,
-    displayedFilters,
-    filters,
-    filterValues,
-    hasCreate,
-    hideFilter,
-    ids,
-    isLoading,
-    onSelect,
-    onToggleItem,
-    onUnselectItems,
-    page,
-    pagination = <DefaultPagination />,
-    perPage,
-    refresh,
-    resource,
-    selectedIds,
-    setFilters,
-    setPage,
-    setSort,
-    showFilter,
-    title,
-    total,
-    translate,
-    version,
-    ...rest
-}) => {
-    const titleElement = <Title title={title} defaultTitle={defaultTitle} />;
+export class ListView extends Component {
+    renderFilters = () => {
+        const {
+            displayedFilters,
+            filters,
+            filterValues,
+            hideFilter,
+            resource,
+            setFilters,
+        } = this.props;
 
-    return (
-        <div
-            className={classnames('list-page', classes.root, className)}
-            {...sanitizeRestProps(rest)}
-        >
-            <Card>
-                <Header
-                    className={classes.header}
-                    title={titleElement}
-                    actions={React.cloneElement(actions, {
-                        className: classes.actions,
+        if (filters) {
+            return React.cloneElement(filters, {
+                displayedFilters,
+                filterValues,
+                hideFilter,
+                resource,
+                setFilters,
+                context: 'form',
+            });
+        }
+
+        return null;
+    };
+
+    renderLoading = () => {
+        const { page, translate } = this.props;
+
+        return (
+            <CardContent style={styles.noResults}>
+                <Typography variant="body1">
+                    {translate('ra.navigation.no_more_results', {
+                        page,
                     })}
-                    actionProps={{
-                        basePath,
-                        bulkActions,
-                        displayedFilters,
-                        filters,
-                        filterValues,
-                        hasCreate,
-                        onUnselectItems,
-                        refresh,
-                        resource,
-                        selectedIds,
-                        showFilter,
-                    }}
-                />
-                {filters &&
-                    React.cloneElement(filters, {
-                        displayedFilters,
-                        filterValues,
-                        hideFilter,
-                        resource,
-                        setFilters,
-                        context: 'form',
-                    })}
-                {isLoading || total > 0 ? (
-                    <div key={version}>
-                        {children &&
-                            React.cloneElement(children, {
-                                basePath,
-                                currentSort,
-                                data,
-                                hasBulkActions: !!bulkActions,
-                                ids,
-                                isLoading,
-                                onSelect,
-                                onToggleItem,
-                                resource,
-                                selectedIds,
-                                setSort,
-                                version,
-                            })}
-                        {!isLoading &&
-                            !ids.length && (
-                                <CardContent style={styles.noResults}>
+                </Typography>
+            </CardContent>
+        );
+    };
+
+    renderPagination = () => {
+        const {
+            currentSort,
+            data,
+            displayedFilters,
+            filters,
+            filterValues,
+            hideFilter,
+            isLoading,
+            onSelect,
+            onUnselectItems,
+            page,
+            pagination = <DefaultPagination />,
+            perPage,
+            refresh,
+            resource,
+            selectedIds,
+            setFilters,
+            setPage,
+            showFilter,
+            total,
+        } = this.props;
+
+        return React.cloneElement(pagination, {
+            currentSort,
+            data,
+            displayedFilters,
+            filters,
+            filterValues,
+            hideFilter,
+            isLoading,
+            onSelect,
+            onUnselectItems,
+            refresh,
+            resource,
+            selectedIds,
+            setFilters,
+            showFilter,
+            page,
+            perPage,
+            setPage,
+            total,
+        });
+    };
+
+    render() {
+        const {
+            actions = <DefaultActions />,
+            basePath,
+            bulkActions = <DefaultBulkActions />,
+            children,
+            className,
+            classes = {},
+            currentSort,
+            data,
+            defaultTitle,
+            displayedFilters,
+            filters,
+            filterValues,
+            hasCreate,
+            hideFilter,
+            ids,
+            isLoading,
+            onSelect,
+            onToggleItem,
+            onUnselectItems,
+            page,
+            pagination = <DefaultPagination />,
+            perPage,
+            refresh,
+            resource,
+            selectedIds,
+            setFilters,
+            setPage,
+            setSort,
+            showFilter,
+            title,
+            total,
+            translate,
+            version,
+            ...rest
+        } = this.props;
+
+        const titleElement = (
+            <Title title={title} defaultTitle={defaultTitle} />
+        );
+
+        return (
+            <div
+                className={classnames('list-page', classes.root, className)}
+                {...sanitizeRestProps(rest)}
+            >
+                <Card>
+                    <Header
+                        className={classes.header}
+                        title={titleElement}
+                        actions={React.cloneElement(actions, {
+                            className: classes.actions,
+                        })}
+                        actionProps={{
+                            basePath,
+                            bulkActions,
+                            currentSort,
+                            data,
+                            displayedFilters,
+                            filters,
+                            filterValues,
+                            hasCreate,
+                            hideFilter,
+                            isLoading,
+                            onSelect,
+                            onUnselectItems,
+                            refresh,
+                            resource,
+                            selectedIds,
+                            setFilters,
+                            showFilter,
+                        }}
+                    />
+                    {typeof children === 'function' ? (
+                        children({
+                            basePath,
+                            currentSort,
+                            data,
+                            displayedFilters,
+                            filters,
+                            filterValues,
+                            hasBulkActions: !!bulkActions,
+                            hideFilter,
+                            ids,
+                            isLoading,
+                            onSelect,
+                            onToggleItem,
+                            renderFilters: this.renderFilters,
+                            renderLoading: this.renderLoading,
+                            renderPagination: this.renderPagination,
+                            resource,
+                            selectedIds,
+                            setFilters,
+                            setSort,
+                            version,
+                        })
+                    ) : (
+                        <Fragment>
+                            {this.renderFilters()}
+                            {isLoading || total > 0 ? (
+                                <div key={version}>
+                                    {children &&
+                                        React.cloneElement(children, {
+                                            basePath,
+                                            currentSort,
+                                            data,
+                                            displayedFilters,
+                                            filters,
+                                            filterValues,
+                                            hasBulkActions: !!bulkActions,
+                                            hideFilter,
+                                            ids,
+                                            isLoading,
+                                            onSelect,
+                                            onToggleItem,
+                                            resource,
+                                            selectedIds,
+                                            setFilters,
+                                            setSort,
+                                            version,
+                                        })}
+                                    {!isLoading &&
+                                        !ids.length &&
+                                        this.renderLoading()}
+                                    {pagination && this.renderPagination()}
+                                </div>
+                            ) : (
+                                <CardContent className={classes.noResults}>
                                     <Typography variant="body1">
-                                        {translate(
-                                            'ra.navigation.no_more_results',
-                                            {
-                                                page,
-                                            }
-                                        )}
+                                        {translate('ra.navigation.no_results')}
                                     </Typography>
                                 </CardContent>
                             )}
-                        {pagination &&
-                            React.cloneElement(pagination, {
-                                page,
-                                perPage,
-                                setPage,
-                                total,
-                            })}
-                    </div>
-                ) : (
-                    <CardContent className={classes.noResults}>
-                        <Typography variant="body1">
-                            {translate('ra.navigation.no_results')}
-                        </Typography>
-                    </CardContent>
-                )}
-            </Card>
-        </div>
-    );
-};
+                        </Fragment>
+                    )}
+                </Card>
+            </div>
+        );
+    }
+}
 
 ListView.propTypes = {
     actions: PropTypes.element,
